@@ -393,7 +393,13 @@ Void TDecTop::xActivateParameterSets()
 #endif
     m_cTrQuant.init     ( sps->getMaxTrSize() );
 
-    m_cSliceDecoder.create();
+    const ChromaFormat chromaFormatIDC = sps->getChromaFormatIdc();
+    const Int          iWidth          = sps->getPicWidthInLumaSamples();
+    const Int          iHeight         = sps->getPicHeightInLumaSamples();
+    const UInt         uiMaxCuWidth    = sps->getMaxCUWidth();
+    const UInt         uiMaxCuHeight   = sps->getMaxCUHeight();
+    const UInt         uiMaxDepth      = sps->getMaxTotalCUDepth();
+    m_cSliceDecoder.create( iWidth, iHeight, chromaFormatIDC, uiMaxCuWidth, uiMaxCuHeight, uiMaxDepth);
   }
   else
   {

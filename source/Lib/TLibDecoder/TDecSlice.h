@@ -45,6 +45,7 @@
 #include "TLibCommon/CommonDef.h"
 #include "TLibCommon/TComBitStream.h"
 #include "TLibCommon/TComPic.h"
+#include "TLibCommon/TComPicYuv.h"
 #include "TDecEntropy.h"
 #include "TDecCu.h"
 #include "TDecSbac.h"
@@ -68,6 +69,10 @@ private:
   TDecCu*         m_pcCuDecoder;
   TDecConformanceCheck *m_pDecConformanceCheck;
 
+  // pictures
+  TComPicYuv      m_picYuvPred;                         ///< prediction picture buffer
+  TComPicYuv      m_picYuvResi;                         ///< residual picture buffer
+
   TDecSbac        m_lastSliceSegmentEndContextState;    ///< context storage for state at the end of the previous slice-segment (used for dependent slices only).
   TDecSbac        m_entropyCodingSyncContextState;      ///< context storate for state of contexts at the wavefront/WPP/entropy-coding-sync second CTU of tile-row
 public:
@@ -75,7 +80,7 @@ public:
   virtual ~TDecSlice();
 
   Void  init              ( TDecEntropy* pcEntropyDecoder, TDecCu* pcMbDecoder, TDecConformanceCheck *pDecConformanceCheck );
-  Void  create            ();
+  Void  create            ( Int iWidth, Int iHeight, ChromaFormat chromaFormat, UInt iMaxCUWidth, UInt iMaxCUHeight, UChar uhTotalDepth );
   Void  destroy           ();
 
   Void  decompressSlice   ( TComInputBitstream** ppcSubstreams,   TComPic* pcPic, TDecSbac* pcSbacDecoder );
