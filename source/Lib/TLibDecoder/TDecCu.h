@@ -116,6 +116,8 @@ protected:
 
   Void xCopyToPic               ( TComDataCU* pcCU, TComPic* pcPic, UInt uiZorderIdx, UInt uiDepth );
 
+  Void xCopyToPicYuv            ( TComDataCU* pcCU, TComPicYuv* pcPicYuv, UInt uiZorderIdx, UInt uiDepth );
+
   Bool getdQPFlag               ()                        { return m_bDecodeDQP;        }
   Void setdQPFlag               ( Bool b )                { m_bDecodeDQP = b;           }
   Bool getIsChromaQpAdjCoded    ()                        { return m_IsChromaQpAdjCoded;        }
