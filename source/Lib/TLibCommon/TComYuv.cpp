@@ -133,6 +133,39 @@ Void TComYuv::copyToPicComponent  ( const ComponentID compID, TComPicYuv* pcPicY
 
 
 
+Void TComYuv::copyToPicYuvOffset   ( TComPicYuv* pcPicYuvDst, const UInt ctuRsAddr, const UInt uiAbsZorderIdx, const UInt uiPartDepth, const UInt uiPartIdx ) const
+{
+  for(Int comp=0; comp<getNumberValidComponents(); comp++)
+  {
+    copyToPicComponentOffset  ( ComponentID(comp), pcPicYuvDst, ctuRsAddr, uiAbsZorderIdx, uiPartDepth, uiPartIdx );
+  }
+}
+
+Void TComYuv::copyToPicComponentOffset  ( const ComponentID compID, TComPicYuv* pcPicYuvDst, const UInt ctuRsAddr, const UInt uiAbsZorderIdx, const UInt uiPartDepth, const UInt uiPartIdx ) const
+{
+  const Int iWidth  = getWidth(compID) >>uiPartDepth;
+  const Int iHeight = getHeight(compID)>>uiPartDepth;
+
+  const Pel* pSrc     = getAddr(compID, uiPartIdx, iWidth);
+        Pel* pDst     = pcPicYuvDst->getAddr ( compID, ctuRsAddr, uiAbsZorderIdx );
+
+  const UInt  iSrcStride  = getStride(compID);
+  const UInt  iDstStride  = pcPicYuvDst->getStride(compID);
+
+  for ( Int y = iHeight; y != 0; y-- )
+  {
+    for ( Int x = iWidth; x != 0; x-- )
+    {
+      pDst[x] = pSrc[x] + 128;
+    }
+    pDst += iDstStride;
+    pSrc += iSrcStride;
+  }
+}
+
+
+
+
 Void TComYuv::copyFromPicYuv   ( const TComPicYuv* pcPicYuvSrc, const UInt ctuRsAddr, const UInt uiAbsZorderIdx )
 {
   for(Int comp=0; comp<getNumberValidComponents(); comp++)
