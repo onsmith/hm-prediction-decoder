@@ -160,6 +160,9 @@ public:
   //  Copy function to picture
   Void          copyToPic         ( TComPicYuv*  pcPicYuvDst ) const ;
 
+  //  Subtract one picture from another
+  Void          copyDiffToPic     ( TComPicYuv*  pcPicYuvDst ) const ;
+
   //  Extend function of picture buffer
   Void          extendPicBorder   ();
 
