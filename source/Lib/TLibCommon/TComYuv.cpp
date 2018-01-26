@@ -151,10 +151,10 @@ Void TComYuv::copyToPicComponentOffset  ( const ComponentID compID, TComPicYuv* 
 
   const UInt  iSrcStride  = getStride(compID);
   const UInt  iDstStride  = pcPicYuvDst->getStride(compID);
-
-  for ( Int y = iHeight; y != 0; y-- )
+  
+  for ( Int y = 0; y < iHeight; y++ )
   {
-    for ( Int x = iWidth; x != 0; x-- )
+    for ( Int x = 0; x < iWidth; x++ )
     {
       pDst[x] = pSrc[x] + 128;
     }

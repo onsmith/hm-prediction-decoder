@@ -430,8 +430,8 @@ Void TDecCu::xDecompressCU( TComDataCU* pCtu, UInt uiAbsPartIdx,  UInt uiDepth )
   }
 
   xCopyToPic( m_ppcCU[uiDepth], pcPic, uiAbsPartIdx, uiDepth );
- 
-  xCopyToPicYuv( m_ppcCU[uiDepth], pcPic->getPicYuvPred(), uiAbsPartIdx, uiDepth );
+
+  xCopyYuvSliceToPic( m_ppcYuvResi[uiDepth], pcPic->getPicYuvResi(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
 }
 
 Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )
@@ -761,13 +761,9 @@ Void TDecCu::xCopyToPic( TComDataCU* pcCU, TComPic* pcPic, UInt uiZorderIdx, UIn
   return;
 }
 
-Void TDecCu::xCopyToPicYuv( TComDataCU* pcCU, TComPicYuv* pcPicYuv, UInt uiZorderIdx, UInt uiDepth )
+Void TDecCu::xCopyYuvSliceToPic( TComYuv const * srcYuv, TComPicYuv* dstPic, UInt uiCtuRsAddr, UInt uiZorderIdx )
 {
-  UInt uiCtuRsAddr = pcCU->getCtuRsAddr();
-
-  m_ppcYuvResi[uiDepth]->copyToPicYuvOffset  ( pcPicYuv, uiCtuRsAddr, uiZorderIdx );
-
-  return;
+  srcYuv->copyToPicYuvOffset ( dstPic, uiCtuRsAddr, uiZorderIdx );
 }
 
 Void TDecCu::xDecodeInterTexture ( TComDataCU* pcCU, UInt uiDepth )
