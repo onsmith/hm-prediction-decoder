@@ -105,10 +105,6 @@ public:
   //  Copy YUV buffer to picture buffer
   Void         copyToPicYuv               ( TComPicYuv* pcPicYuvDst, const UInt ctuRsAddr, const UInt uiAbsZorderIdx, const UInt uiPartDepth = 0, const UInt uiPartIdx = 0 ) const ;
   Void         copyToPicComponent         ( const ComponentID id, TComPicYuv* pcPicYuvDst, const UInt iCtuRsAddr, const UInt uiAbsZorderIdx, const UInt uiPartDepth = 0, const UInt uiPartIdx = 0 ) const ;
- 
-  //  Copy YUV buffer to picture buffer with offset
-  Void         copyToPicYuvOffset         ( TComPicYuv* pcPicYuvDst, const UInt ctuRsAddr, const UInt uiAbsZorderIdx, const UInt uiPartDepth = 0, const UInt uiPartIdx = 0 ) const ;
-  Void         copyToPicComponentOffset   ( const ComponentID id, TComPicYuv* pcPicYuvDst, const UInt iCtuRsAddr, const UInt uiAbsZorderIdx, const UInt uiPartDepth = 0, const UInt uiPartIdx = 0 ) const ;
 
   //  Copy YUV buffer from picture buffer
   Void         copyFromPicYuv             ( const TComPicYuv* pcPicYuvSrc, const  UInt ctuRsAddr, const UInt uiAbsZorderIdx );

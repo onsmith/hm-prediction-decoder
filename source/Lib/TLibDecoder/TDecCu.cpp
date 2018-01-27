@@ -80,7 +80,8 @@ Void TDecCu::init(TDecEntropy* pcEntropyDecoder, TComTrQuant* pcTrQuant, TComPre
 Void TDecCu::create( UInt uiMaxDepth, UInt uiMaxWidth, UInt uiMaxHeight, ChromaFormat chromaFormatIDC )
 {
   m_uiMaxDepth = uiMaxDepth+1;
-
+  
+  m_ppcYuvPred = new TComYuv*[m_uiMaxDepth-1];
   m_ppcYuvResi = new TComYuv*[m_uiMaxDepth-1];
   m_ppcYuvReco = new TComYuv*[m_uiMaxDepth-1];
   m_ppcCU      = new TComDataCU*[m_uiMaxDepth-1];
@@ -98,7 +99,8 @@ Void TDecCu::create( UInt uiMaxDepth, UInt uiMaxWidth, UInt uiMaxHeight, ChromaF
     // (Section 7.4.3.2: "The CVS shall not contain data that result in (Log2MinTrafoSize) MinTbLog2SizeY
     //                    greater than or equal to MinCbLog2SizeY")
     // TODO: tidy the array allocation given the above comment.
-
+    
+    m_ppcYuvPred[ui] = new TComYuv;    m_ppcYuvPred[ui]->create( uiWidth, uiHeight, chromaFormatIDC );
     m_ppcYuvResi[ui] = new TComYuv;    m_ppcYuvResi[ui]->create( uiWidth, uiHeight, chromaFormatIDC );
     m_ppcYuvReco[ui] = new TComYuv;    m_ppcYuvReco[ui]->create( uiWidth, uiHeight, chromaFormatIDC );
     m_ppcCU     [ui] = new TComDataCU; m_ppcCU     [ui]->create( chromaFormatIDC, uiNumPartitions, uiWidth, uiHeight, true, uiMaxWidth >> (m_uiMaxDepth - 1) );
@@ -120,11 +122,13 @@ Void TDecCu::destroy()
 {
   for ( UInt ui = 0; ui < m_uiMaxDepth-1; ui++ )
   {
+    m_ppcYuvPred[ui]->destroy(); delete m_ppcYuvPred[ui]; m_ppcYuvPred[ui] = NULL;
     m_ppcYuvResi[ui]->destroy(); delete m_ppcYuvResi[ui]; m_ppcYuvResi[ui] = NULL;
     m_ppcYuvReco[ui]->destroy(); delete m_ppcYuvReco[ui]; m_ppcYuvReco[ui] = NULL;
     m_ppcCU     [ui]->destroy(); delete m_ppcCU     [ui]; m_ppcCU     [ui] = NULL;
   }
-
+  
+  delete [] m_ppcYuvPred; m_ppcYuvPred = NULL;
   delete [] m_ppcYuvResi; m_ppcYuvResi = NULL;
   delete [] m_ppcYuvReco; m_ppcYuvReco = NULL;
   delete [] m_ppcCU     ; m_ppcCU      = NULL;
@@ -430,8 +434,8 @@ Void TDecCu::xDecompressCU( TComDataCU* pCtu, UInt uiAbsPartIdx,  UInt uiDepth )
   }
 
   xCopyToPic( m_ppcCU[uiDepth], pcPic, uiAbsPartIdx, uiDepth );
-
-  xCopyYuvSliceToPic( m_ppcYuvResi[uiDepth], pcPic->getPicYuvResi(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
+  xCopyToPic( m_ppcYuvPred[uiDepth], pcPic->getPicYuvPred(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
+  xCopyToPic( m_ppcYuvResi[uiDepth], pcPic->getPicYuvResi(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
 }
 
 Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )
@@ -456,6 +460,8 @@ Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )
 
   // inter recon
   xDecodeInterTexture( pcCU, uiDepth );
+
+  m_ppcYuvReco[uiDepth]->copyPartToPartYuv( m_ppcYuvPred[uiDepth], 0, pcCU->getWidth( 0 ), pcCU->getHeight( 0 ) );
 
 #if DEBUG_STRING
   if (DebugOptionList::DebugString_Resi.getInt()&debugPredModeMask)
@@ -699,7 +705,7 @@ TDecCu::xReconIntraQT( TComDataCU* pcCU, UInt uiDepth )
 
     do
     {
-      xIntraRecQT( m_ppcYuvReco[uiDepth], m_ppcYuvReco[uiDepth], m_ppcYuvResi[uiDepth], chanType, tuRecurseWithPU );
+      xIntraRecQT( m_ppcYuvReco[uiDepth], m_ppcYuvPred[uiDepth], m_ppcYuvResi[uiDepth], chanType, tuRecurseWithPU );
     } while (tuRecurseWithPU.nextSection(tuRecurseCU));
   }
 }
@@ -761,9 +767,9 @@ Void TDecCu::xCopyToPic( TComDataCU* pcCU, TComPic* pcPic, UInt uiZorderIdx, UIn
   return;
 }
 
-Void TDecCu::xCopyYuvSliceToPic( TComYuv const * srcYuv, TComPicYuv* dstPic, UInt uiCtuRsAddr, UInt uiZorderIdx )
+Void TDecCu::xCopyToPic( TComYuv const * srcYuv, TComPicYuv* dstPic, UInt uiCtuRsAddr, UInt uiZorderIdx )
 {
-  srcYuv->copyToPicYuvOffset ( dstPic, uiCtuRsAddr, uiZorderIdx );
+  srcYuv->copyToPicYuv ( dstPic, uiCtuRsAddr, uiZorderIdx );
 }
 
 Void TDecCu::xDecodeInterTexture ( TComDataCU* pcCU, UInt uiDepth )
