@@ -395,16 +395,10 @@ Void TAppDecTop::xWriteOutput( TComList<TComPic*>* pcListPic, UInt tId )
               display = false;
             }
           }
-          
-          pcPicTop->getPicYuvPred()->copyToPic(pcPicTop->getPicYuvResi());
-          pcPicTop->getPicYuvRec()->copyDiffToPic(pcPicTop->getPicYuvResi());
-
-          pcPicBottom->getPicYuvPred()->copyToPic(pcPicBottom->getPicYuvResi());
-          pcPicBottom->getPicYuvRec()->copyDiffToPic(pcPicBottom->getPicYuvResi());
 
           if (display)
           {
-            m_cTVideoIOYuvReconFile.write( pcPicTop->getPicYuvPred(), pcPicBottom->getPicYuvPred(),
+            m_cTVideoIOYuvReconFile.write( pcPicTop->getPicYuvRec(), pcPicBottom->getPicYuvRec(),
                                            m_outputColourSpaceConvert,
                                            conf.getWindowLeftOffset() + defDisp.getWindowLeftOffset(),
                                            conf.getWindowRightOffset() + defDisp.getWindowRightOffset(),
@@ -458,9 +452,6 @@ Void TAppDecTop::xWriteOutput( TComList<TComPic*>* pcListPic, UInt tId )
         {
           const Window &conf    = pcPic->getConformanceWindow();
           const Window  defDisp = m_respectDefDispWindow ? pcPic->getDefDisplayWindow() : Window();
-
-          pcPic->getPicYuvPred()->copyToPic(pcPic->getPicYuvResi());
-          pcPic->getPicYuvRec()->copyDiffToPic(pcPic->getPicYuvResi());
 
           m_cTVideoIOYuvReconFile.write( pcPic->getPicYuvPred(),
                                          m_outputColourSpaceConvert,
