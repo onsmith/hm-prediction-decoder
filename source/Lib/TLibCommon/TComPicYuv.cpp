@@ -195,6 +195,29 @@ Void TComPicYuv::destroy()
 
 
 
+Void TComPicYuv::addScalar( const Int iScalar )
+{
+  for( Int comp = 0; comp < getNumberValidComponents(); comp++ )
+  {
+    const ComponentID compID = ComponentID( comp );
+    const Int         width  = getWidth( compID );
+    const Int         height = getHeight( compID );
+    const Int         stride = getStride( compID );
+          Pel*        p      = getAddr( compID );
+
+    for ( Int y = height-1; y >= 0; y-- )
+    {
+      for ( Int x = width-1; x >= 0; x-- )
+      {
+        p[x] += iScalar;
+      }
+      p += stride;
+    }
+  }
+}
+
+
+
 Void  TComPicYuv::copyToPic (TComPicYuv*  pcPicYuvDst) const
 {
   assert( m_chromaFormatIDC == pcPicYuvDst->getChromaFormat() );

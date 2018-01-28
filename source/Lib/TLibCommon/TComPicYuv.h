@@ -157,6 +157,9 @@ public:
   //  Miscellaneous
   // ------------------------------------------------------------------------------------------------
 
+  //  Add scalar offset to every pixel
+  Void          addScalar         ( const Int iScalar );
+
   //  Copy function to picture
   Void          copyToPic         ( TComPicYuv*  pcPicYuvDst ) const ;
 

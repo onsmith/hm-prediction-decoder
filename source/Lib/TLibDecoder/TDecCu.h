@@ -58,6 +58,7 @@ class TDecCu
 {
 private:
   UInt                m_uiMaxDepth;       ///< max. number of depth
+  TComYuv**           m_ppcYuvPred;       ///< array of prediction buffer
   TComYuv**           m_ppcYuvResi;       ///< array of residual buffer
   TComYuv**           m_ppcYuvReco;       ///< array of prediction & reconstruction buffer
   TComDataCU**        m_ppcCU;            ///< CU data array
@@ -116,7 +117,7 @@ protected:
 
   Void xCopyToPic               ( TComDataCU* pcCU, TComPic* pcPic, UInt uiZorderIdx, UInt uiDepth );
 
-  Void xCopyToPicYuv            ( TComDataCU* pcCU, TComPicYuv* pcPicYuv, UInt uiZorderIdx, UInt uiDepth );
+  static Void xCopyToPic        ( TComYuv const * srcYuv, TComPicYuv* dstPic, UInt uiCtuRsAddr, UInt uiZorderIdx );
 
   Bool getdQPFlag               ()                        { return m_bDecodeDQP;        }
   Void setdQPFlag               ( Bool b )                { m_bDecodeDQP = b;           }
