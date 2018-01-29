@@ -433,7 +433,8 @@ Void TDecCu::xDecompressCU( TComDataCU* pCtu, UInt uiAbsPartIdx,  UInt uiDepth )
     xFillPCMBuffer(m_ppcCU[uiDepth], uiDepth);
   }
 
-  xCopyToPic( m_ppcCU[uiDepth], pcPic, uiAbsPartIdx, uiDepth );
+  //xCopyToPic( m_ppcCU[uiDepth], pcPic, uiAbsPartIdx, uiDepth );
+  xCopyToPic( m_ppcYuvReco[uiDepth], pcPic->getPicYuvRec(),  m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
   xCopyToPic( m_ppcYuvPred[uiDepth], pcPic->getPicYuvPred(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
   xCopyToPic( m_ppcYuvResi[uiDepth], pcPic->getPicYuvResi(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
 }
@@ -448,7 +449,7 @@ Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )
     m_pConformanceCheck->flagTMctsError("motion vector across tile boundaries");
   }
 #endif
-  m_pcPrediction->motionCompensation( pcCU, m_ppcYuvReco[uiDepth] );
+  m_pcPrediction->motionCompensation( pcCU, m_ppcYuvPred[uiDepth] );
 
 #if DEBUG_STRING
   const Int debugPredModeMask=DebugStringGetPredModeMask(MODE_INTER);
@@ -461,8 +462,6 @@ Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )
   // inter recon
   xDecodeInterTexture( pcCU, uiDepth );
 
-  m_ppcYuvReco[uiDepth]->copyPartToPartYuv( m_ppcYuvPred[uiDepth], 0, pcCU->getWidth( 0 ), pcCU->getHeight( 0 ) );
-
 #if DEBUG_STRING
   if (DebugOptionList::DebugString_Resi.getInt()&debugPredModeMask)
   {
@@ -473,11 +472,11 @@ Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )
   // clip for only non-zero cbp case
   if  ( pcCU->getQtRootCbf( 0) )
   {
-    m_ppcYuvReco[uiDepth]->addClip( m_ppcYuvReco[uiDepth], m_ppcYuvResi[uiDepth], 0, pcCU->getWidth( 0 ), pcCU->getSlice()->getSPS()->getBitDepths() );
+    m_ppcYuvReco[uiDepth]->addClip( m_ppcYuvPred[uiDepth], m_ppcYuvResi[uiDepth], 0, pcCU->getWidth( 0 ), pcCU->getSlice()->getSPS()->getBitDepths() );
   }
   else
   {
-    m_ppcYuvReco[uiDepth]->copyPartToPartYuv( m_ppcYuvReco[uiDepth],0, pcCU->getWidth( 0 ),pcCU->getHeight( 0 ));
+    m_ppcYuvPred[uiDepth]->copyPartToPartYuv( m_ppcYuvReco[uiDepth],0, pcCU->getWidth( 0 ),pcCU->getHeight( 0 ));
   }
 #if DEBUG_STRING
   if (DebugOptionList::DebugString_Reco.getInt()&debugPredModeMask)
