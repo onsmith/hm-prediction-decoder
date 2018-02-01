@@ -90,6 +90,7 @@ protected:
 private:
   Void applyColourRemapping(const TComPicYuv& pic, SEIColourRemappingInfo& pCriSEI, const TComSPS &activeSPS);
   Void xOutputColourRemapPic(TComPic* pcPic);
+  TComPicYuv* xGetOutputPic( TComPic* pic );
 };
 
 //! \}

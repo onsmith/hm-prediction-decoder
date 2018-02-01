@@ -62,6 +62,7 @@ protected:
   Int           m_outputBitDepth[MAX_NUM_CHANNEL_TYPE]; ///< bit depth used for writing output
   InputColourSpaceConversion m_outputColourSpaceConvert;
 
+  Int           m_outputPictureStream;                ///< desired reconstructed picture stream to write as output
   Int           m_iMaxTemporalLayer;                  ///< maximum temporal layer to be decoded
   Int           m_decodedPictureHashSEIEnabled;       ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
   Bool          m_decodedNoDisplaySEIEnabled;         ///< Enable(true)/disable(false) writing only pictures that get displayed based on the no display SEI message
@@ -76,6 +77,13 @@ protected:
 #if MCTS_ENC_CHECK
   Bool          m_tmctsCheck;
 #endif
+
+  enum
+  {
+    OUTPUT_PREDICTION,
+    OUTPUT_RESIDUAL,
+    OUTPUT_RECONSTRUCTION,
+  };
 
 public:
   TAppDecCfg()

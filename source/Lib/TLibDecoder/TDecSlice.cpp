@@ -53,19 +53,12 @@ TDecSlice::~TDecSlice()
 {
 }
 
-Void TDecSlice::create(Int iWidth, Int iHeight, ChromaFormat chromaFormat, UInt iMaxCUWidth, UInt iMaxCUHeight, UChar uhTotalDepth)
+Void TDecSlice::create()
 {
-  // create prediction picture
-  m_picYuvPred.create(iWidth, iHeight, chromaFormat, iMaxCUWidth, iMaxCUHeight, uhTotalDepth, true);
-
-  // create residual picture
-  m_picYuvResi.create(iWidth, iHeight, chromaFormat, iMaxCUWidth, iMaxCUHeight, uhTotalDepth, true);
 }
 
 Void TDecSlice::destroy()
 {
-  m_picYuvPred.destroy();
-  m_picYuvResi.destroy();
 }
 
 Void TDecSlice::init(TDecEntropy* pcEntropyDecoder, TDecCu* pcCuDecoder, TDecConformanceCheck *pDecConformanceCheck)
@@ -91,8 +84,9 @@ Void TDecSlice::decompressSlice(TComInputBitstream** ppcSubstreams, TComPic* pcP
   m_pcEntropyDecoder->setBitstream      ( ppcSubstreams[0] );
   m_pcEntropyDecoder->resetEntropy      (pcSlice);
 
-  pcPic->setPicYuvPred( &m_picYuvPred );
-  pcPic->setPicYuvResi( &m_picYuvResi );
+  // decoder doesn't need prediction & residual frame buffer
+  pcPic->setPicYuvPred( 0 );
+  pcPic->setPicYuvResi( 0 );
 
 #if ENC_DEC_TRACE
   g_bJustDoIt = g_bEncDecTraceEnable;

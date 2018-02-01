@@ -434,9 +434,9 @@ Void TDecCu::xDecompressCU( TComDataCU* pCtu, UInt uiAbsPartIdx,  UInt uiDepth )
   }
 
   //xCopyToPic( m_ppcCU[uiDepth], pcPic, uiAbsPartIdx, uiDepth );
-  xCopyToPic( m_ppcYuvReco[uiDepth], pcPic->getPicYuvRec(),  m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
-  xCopyToPic( m_ppcYuvPred[uiDepth], pcPic->getPicYuvPred(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
-  xCopyToPic( m_ppcYuvResi[uiDepth], pcPic->getPicYuvResi(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
+  xCopyToPic( m_ppcYuvReco[uiDepth], pcPic->getPicYuvRec(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
+  xCopyToPic( m_ppcYuvPred[uiDepth], pcPic->getPicYuvPre(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
+  xCopyToPic( m_ppcYuvResi[uiDepth], pcPic->getPicYuvRes(), m_ppcCU[uiDepth]->getCtuRsAddr(), uiAbsPartIdx );
 }
 
 Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )

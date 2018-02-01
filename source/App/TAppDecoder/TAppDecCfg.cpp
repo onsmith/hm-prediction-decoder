@@ -63,6 +63,7 @@ Bool TAppDecCfg::parseCfg( Int argc, TChar* argv[] )
   Bool do_help = false;
   string cfg_TargetDecLayerIdSetFile;
   string outputColourSpaceConvert;
+  string outputPictureStream;
   Int warnUnknowParameter = 0;
 
   po::Options opts;
@@ -73,6 +74,7 @@ Bool TAppDecCfg::parseCfg( Int argc, TChar* argv[] )
   ("BitstreamFile,b",           m_bitstreamFileName,                   string(""), "bitstream input file name")
   ("ReconFile,o",               m_reconFileName,                       string(""), "reconstructed YUV output file name\n"
                                                                                    "YUV writing is skipped if omitted")
+  ("OutputPictureStream,c",     outputPictureStream,                   string(""), "Reconstructed picture stream that should be written to output file. Permitted values are (prediction, residual, reconstruction). Default reconstruction.")
   ("WarnUnknowParameter,w",     warnUnknowParameter,                                  0, "warn for unknown configuration parameters instead of failing")
   ("SkipFrames,s",              m_iSkipFrame,                          0,          "number of frames to skip before random access")
   ("OutputBitDepth,d",          m_outputBitDepth[CHANNEL_TYPE_LUMA],   0,          "bit depth of YUV output luma component (default: use 0 for native depth)")
@@ -176,6 +178,24 @@ Bool TAppDecCfg::parseCfg( Int argc, TChar* argv[] )
     {
       fprintf(stderr, "File %s could not be opened. Using all LayerIds as default.\n", cfg_TargetDecLayerIdSetFile.c_str() );
     }
+  }
+
+  if (outputPictureStream == "prediction")
+  {
+    m_outputPictureStream = OUTPUT_PREDICTION;
+  }
+  else if (outputPictureStream == "residual")
+  {
+    m_outputPictureStream = OUTPUT_RESIDUAL;
+  }
+  else if (outputPictureStream == "reconstruction" || outputPictureStream == "")
+  {
+    m_outputPictureStream = OUTPUT_RECONSTRUCTION;
+  }
+  else
+  {
+    fprintf( stderr, "Unknown output picture stream. Aborting." );
+    return false;
   }
 
   return true;

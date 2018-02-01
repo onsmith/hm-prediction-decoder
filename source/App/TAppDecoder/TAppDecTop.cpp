@@ -309,6 +309,21 @@ Void TAppDecTop::xInitDecLib()
   }
 }
 
+TComPicYuv* TAppDecTop::xGetOutputPic( TComPic* pic )
+{
+  switch (m_outputPictureStream)
+  {
+  case OUTPUT_PREDICTION:
+    return pic->getPicYuvPre();
+  case OUTPUT_RESIDUAL:
+    return pic->getPicYuvRes();
+  case OUTPUT_RECONSTRUCTION:
+    return pic->getPicYuvRec();
+  default:
+    return nullptr;
+  }
+}
+
 /** \param pcListPic list of pictures to be written to file
     \param tId       temporal sub-layer ID
  */
@@ -453,8 +468,8 @@ Void TAppDecTop::xWriteOutput( TComList<TComPic*>* pcListPic, UInt tId )
           const Window &conf    = pcPic->getConformanceWindow();
           const Window  defDisp = m_respectDefDispWindow ? pcPic->getDefDisplayWindow() : Window();
 
-          pcPic->getPicYuvResi()->addScalar(128);
-          m_cTVideoIOYuvReconFile.write( pcPic->getPicYuvPred(),
+          pcPic->getPicYuvRes()->addScalar(128);
+          m_cTVideoIOYuvReconFile.write( xGetOutputPic( pcPic ),
                                          m_outputColourSpaceConvert,
                                          conf.getWindowLeftOffset() + defDisp.getWindowLeftOffset(),
                                          conf.getWindowRightOffset() + defDisp.getWindowRightOffset(),
@@ -577,8 +592,8 @@ Void TAppDecTop::xFlushOutput( TComList<TComPic*>* pcListPic )
           const Window &conf    = pcPic->getConformanceWindow();
           const Window  defDisp = m_respectDefDispWindow ? pcPic->getDefDisplayWindow() : Window();
 
-          pcPic->getPicYuvResi()->addScalar(128);
-          m_cTVideoIOYuvReconFile.write( pcPic->getPicYuvPred(),
+          pcPic->getPicYuvRes()->addScalar(128);
+          m_cTVideoIOYuvReconFile.write( xGetOutputPic( pcPic ),
                                          m_outputColourSpaceConvert,
                                          conf.getWindowLeftOffset() + defDisp.getWindowLeftOffset(),
                                          conf.getWindowRightOffset() + defDisp.getWindowRightOffset(),

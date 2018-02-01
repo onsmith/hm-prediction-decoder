@@ -56,7 +56,7 @@
 class TComPic
 {
 public:
-  typedef enum { PIC_YUV_ORG=0, PIC_YUV_REC=1, PIC_YUV_TRUE_ORG=2, NUM_PIC_YUV=3 } PIC_YUV_T;
+  typedef enum { PIC_YUV_ORG=0, PIC_YUV_REC=1, PIC_YUV_TRUE_ORG=2, PIC_YUV_PRE=3, PIC_YUV_RES=4, NUM_PIC_YUV=5 } PIC_YUV_T;
      // TRUE_ORG is the input file without any pre-encoder colour space conversion (but with possible bit depth increment)
   TComPicYuv*   getPicYuvTrueOrg()        { return  m_apcPicYuv[PIC_YUV_TRUE_ORG]; }
 
@@ -79,7 +79,9 @@ private:
 
   std::vector<std::vector<TComDataCU*> > m_vSliceCUDataLink;
 
-  SEIMessages  m_SEIs; ///< Any SEI messages that have been received.  If !NULL we own the object.
+  SEIMessages m_SEIs; ///< Any SEI messages that have been received.  If !NULL we own the object.
+
+  Void releaseImageData( TComPicYuv*& pic );
 
 public:
   TComPic();
@@ -118,6 +120,9 @@ public:
 
   TComPicYuv*   getPicYuvOrg()        { return  m_apcPicYuv[PIC_YUV_ORG]; }
   TComPicYuv*   getPicYuvRec()        { return  m_apcPicYuv[PIC_YUV_REC]; }
+
+  TComPicYuv*   getPicYuvPre()        { return  m_apcPicYuv[PIC_YUV_PRE]; }
+  TComPicYuv*   getPicYuvRes()        { return  m_apcPicYuv[PIC_YUV_RES]; }
 
   TComPicYuv*   getPicYuvPred()       { return  m_pcPicYuvPred; }
   TComPicYuv*   getPicYuvResi()       { return  m_pcPicYuvResi; }
